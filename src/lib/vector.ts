@@ -53,6 +53,10 @@ class Vector {
     return this.zipWith(v, (l, r) => l * r);
   }
 
+  div(v: Vector): Vector {
+    return this.zipWith(v, (l, r) => l / r);
+  }
+
   add(v: Vector): Vector {
     return this.zipWith(v, (l, r) => l + r);
   }
@@ -77,6 +81,10 @@ class Vector {
     return Math.sqrt(this.dot(this));
   }
 
+  equals(other: Vector): boolean {
+    return this.sub(other).all((n) => n == 0);
+  }
+
   zipWith(that: Vector, combiner: (l: number, r: number) => number): Vector {
     let a = this.vec.at(0);
     let b = that.vec.at(0);
@@ -91,6 +99,14 @@ class Vector {
       b = that.vec.at(i);
     }
     return result;
+  }
+
+  any(predicate: (n: number) => boolean): boolean {
+    return this.vec.some(predicate);
+  }
+
+  all(predicate: (n: number) => boolean): boolean {
+    return this.vec.every(predicate);
   }
 
   fold<T>(reducer: (n: number, acc: T) => T, init: T): T {
