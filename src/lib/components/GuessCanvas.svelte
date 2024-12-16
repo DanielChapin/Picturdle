@@ -32,6 +32,7 @@
     board?: Board
     tool?: "pencil" | "fill"
     zoom?: number
+    gridLines?: boolean
     centeredOn?: Vector
     scrollSensitivity?: number
     selectedColor?: Color
@@ -41,6 +42,7 @@
     board: boardInit,
     tool = $bindable("pencil"),
     zoom,
+    gridLines = true,
     scrollSensitivity = 0.05,
     selectedColor = $bindable(Color.rgb(255, 0, 255)),
     centeredOn = new Vector(0.5, 0.5),
@@ -66,7 +68,7 @@
 
   function render(ctx: CanvasRenderingContext2D) {
     let gridSize = Math.floor(zoom!)
-    let drawGrid = gridSize > 5
+    let drawGrid = gridSize > 5 && gridLines
     let sizepx = canvas.getBoundingClientRect()
 
     ctx.resetTransform()
@@ -124,7 +126,7 @@
   function gridUV(vec: Vector): Vector {
     let size = canvasSizePx()
     let scale = size.div(gridSizePx())
-    return vec.div(size).sub(new Vector(0.5, 0.5)).mult(scale)
+    return vec.div(size).sub(Vector.repeated(0.5, 2)).mult(scale).add(centeredOn.sub(Vector.repeated(0.5, 2)))
   }
 
   function gridUVtoIndices(gridUV: Vector): Vector | undefined {
@@ -146,6 +148,7 @@
     // centeredOn = centeredOn.add(posUV).clamp(Vector.origin(3), Vector.repeated(1, 3))
   }
 
+  let lastMousePos: Vector | undefined;
   function mouseDown(event: MouseEvent) {
     event.preventDefault()
     switch (event.button) {
@@ -168,6 +171,7 @@
         rmbPressed = false
         break
     }
+    lastMousePos = undefined
   }
 
   function mouseMove(event: MouseEvent) {
@@ -179,10 +183,19 @@
     let posUV = uv(clientPos)
     let posGrid = gridUV(clientPos)
     let gridIndices = gridUVtoIndices(posGrid)
+    if (!lastMousePos) {
+      lastMousePos = posUV;
+    }
 
     if (lmbPressed && gridIndices) {
       draw(gridIndices)
     }
+
+    if (rmbPressed) {
+      centeredOn = centeredOn.add(posUV.sub(lastMousePos).scale(-1)).clamp(Vector.origin(2), Vector.repeated(1, 3))
+    }
+
+    lastMousePos = posUV;
   }
 
   function draw(indices: Vector) {
