@@ -17,6 +17,10 @@ class Vector {
     return Vector.repeated(0, dimensions);
   }
 
+  toArray(): number[] {
+    return this.vec;
+  }
+
   x(): number {
     return this.vec[0];
   }
@@ -49,7 +53,7 @@ class Vector {
     return this.vec.at(n);
   }
 
-  mult(v: Vector): Vector {
+  mul(v: Vector): Vector {
     return this.zipWith(v, (l, r) => l * r);
   }
 
@@ -74,7 +78,7 @@ class Vector {
   }
 
   dot(v: Vector): number {
-    return this.mult(v).reduce((n, acc) => acc + n);
+    return this.mul(v).reduce((n, acc) => acc + n);
   }
 
   magnitude(): number {

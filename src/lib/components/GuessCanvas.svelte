@@ -126,11 +126,11 @@
   function gridUV(vec: Vector): Vector {
     let size = canvasSizePx()
     let scale = size.div(gridSizePx())
-    return vec.div(size).sub(Vector.repeated(0.5, 2)).mult(scale).add(centeredOn.sub(Vector.repeated(0.5, 2)))
+    return vec.div(size).sub(Vector.repeated(0.5, 2)).mul(scale).add(centeredOn.sub(Vector.repeated(0.5, 2)))
   }
 
   function gridUVtoIndices(gridUV: Vector): Vector | undefined {
-    let raw = gridUV.add(new Vector(0.5, 0.5)).mult(dimensions).map(Math.floor)
+    let raw = gridUV.add(new Vector(0.5, 0.5)).mul(dimensions).map(Math.floor)
     if (raw.x() < 0 || raw.x() >= dimensions.x() || raw.y() < 0 || raw.y() >= dimensions.y()) {
       return undefined
     }
