@@ -132,4 +132,6 @@ class Vector {
   }
 }
 
+export const vec = (...nums: number[]): Vector => new Vector(...nums);
+
 export default Vector;
